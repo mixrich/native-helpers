@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+
+    <div data-js-component="example">
+        Example with programmamic value = <output data-js-output="value"></output>    
+        <button data-js-action="random">random value</button>
+        <button data-js-action="default">default</button>
+    </div>
+    <hr>
+    <div data-js-component="example-template">
+        <template data-view="default">
+            <div>
+                Default template
+                <button data-js-action="fetch">Switch to fetch</button>
+            </div>            
+        </template>
+        <template data-view="fetch">
+            <div>
+                Fetching template
+                <button data-js-action="done">Switch to Done</button>
+            </div>
+        </template>
+        <template data-view="done">
+            <div>
+                Done template
+                <button data-js-action="default">Switch to default</button>
+            </div>
+        </template>
+    </div>
+
+    <script src="dom-component.js"></script>
+    <script>
+        class ExampleComponent extends DomComponent {
+            constructor(DOMContainer) {
+                super(DOMContainer);
+                this.setDefaultOutput();
+            }
+
+            dispatchAction(action) {
+                switch(action) {
+                    case 'random': this.setOutput('value', Math.random()); break;
+                    case 'default': this.setDefaultOutput(); break;
+                }
+            }
+
+            setDefaultOutput() {
+                this.setOutput('value', 'default');
+            }
+        }
+
+        class ExampleTemplateComponent extends DomComponent {
+            constructor(DOMContainer) {
+                super(DOMContainer);
+                this.setView('default');
+            }
+
+            dispatchAction(action) {
+                switch(action) {
+                    case 'fetch': this.setView('fetch'); break;
+                    case 'done': this.setView('done'); break;
+                    case 'default': this.setView('default'); break;
+                }
+            }
+        }
+
+        const examplesContainers = document.querySelectorAll('[data-js-component="example"]');
+        Array.prototype.forEach.call(examplesContainers, (container) => {
+            const exampleComponent = new ExampleComponent(container);
+            exampleComponent.init();
+        });
+
+
+        const examplesTemplateContainers = document.querySelectorAll('[data-js-component="example-template"]');
+        Array.prototype.forEach.call(examplesTemplateContainers, (container) => {
+            const exampleTemplateComponent = new ExampleTemplateComponent(container);
+            exampleTemplateComponent.init();
+        });
+    </script>
+</body>
+</html>
